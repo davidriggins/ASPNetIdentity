@@ -22,16 +22,21 @@ namespace IdentityManager.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Register()
+        public async Task<IActionResult> Register(string returnUrl=null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             RegisterViewModel registerViewModel = new RegisterViewModel();
             return View(registerViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            returnUrl = returnUrl ?? Url.Content("~/");
+
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser
@@ -45,7 +50,7 @@ namespace IdentityManager.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    return LocalRedirect(returnUrl);
                 }
 
                 AddErrors(result);
@@ -68,6 +73,7 @@ namespace IdentityManager.Controllers
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl=null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+            returnUrl = returnUrl ?? Url.Content("~/");
 
             if (ModelState.IsValid)
             {
@@ -76,7 +82,7 @@ namespace IdentityManager.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Redirect(returnUrl);
+                    return LocalRedirect(returnUrl);
                 }
                 else
                 {
