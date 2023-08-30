@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IdentityManager.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 namespace IdentityManager.Controllers
 {
@@ -7,6 +9,13 @@ namespace IdentityManager.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Register()
+        {
+            RegisterViewModel registerViewModel= new RegisterViewModel();
+            return View(registerViewModel);
         }
     }
 }
