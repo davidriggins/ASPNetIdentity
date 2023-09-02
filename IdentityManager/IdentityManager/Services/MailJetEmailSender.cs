@@ -25,37 +25,18 @@ namespace IdentityManager.Services
             {
                 Resource = Send.Resource,
             }
-               .Property(Send.Messages, new JArray {
+               .Property(Send.FromEmail, "davidstestemail@proton.me")
+               .Property(Send.FromName, "Identity Project")
+               .Property(Send.Subject, subject)
+               .Property(Send.TextPart, "Password info!")
+               .Property(Send.HtmlPart, htmlMessage)
+               .Property(Send.Recipients, new JArray {
                 new JObject {
-                 {"From", new JObject {
-                  {"Email", "davidstestemail@proton.me"},
-                  {"Name", "David"}
-                  }},
-                 {"To", new JArray {
-                  new JObject {
-                   {"Email", "davidstestemail@proton.me"},
-                   {"Name", "David"}
-                   }
-                  }},
-                 {"Subject", subject},
-                 {"HTMLPart", htmlMessage}
+                 {"Email", email}
                  }
                    });
+            MailjetResponse response = await client.PostAsync(request);
 
-            await client.PostAsync(request);
-
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    Console.WriteLine(string.Format("Total: {0}, Count: {1}\n", response.GetTotal(), response.GetCount()));
-            //    Console.WriteLine(response.GetData());
-            //}
-            //else
-            //{
-            //    Console.WriteLine(string.Format("StatusCode: {0}\n", response.StatusCode));
-            //    Console.WriteLine(string.Format("ErrorInfo: {0}\n", response.GetErrorInfo()));
-            //    Console.WriteLine(response.GetData());
-            //    Console.WriteLine(string.Format("ErrorMessage: {0}\n", response.GetErrorMessage()));
-            //}
         }
     }
 }
