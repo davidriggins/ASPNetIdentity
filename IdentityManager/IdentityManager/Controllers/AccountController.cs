@@ -13,7 +13,7 @@ namespace IdentityManager.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<IdentityUser> userManager, 
+        public AccountController(UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             IEmailSender emailSender)
         {
@@ -76,7 +76,7 @@ namespace IdentityManager.Controllers
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
-            if (userId==null || code==null)
+            if (userId == null || code == null)
             {
                 return View("Error");
             }
@@ -186,9 +186,9 @@ namespace IdentityManager.Controllers
 
 
         [HttpGet]
-        public IActionResult ResetPassword(string code=null)
+        public IActionResult ResetPassword(string code = null)
         {
-            return code==null ? View("Error") : View();
+            return code == null ? View("Error") : View();
         }
 
         [HttpPost]
@@ -230,7 +230,7 @@ namespace IdentityManager.Controllers
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl } );
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
 
             return Challenge(properties, provider);
@@ -275,6 +275,42 @@ namespace IdentityManager.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnurl)
+        {
+            returnurl = returnurl ?? Url.Content("~/");
+
+            if (ModelState.IsValid)
+            {
+                // get  the info about the user from external login provider
+                var info = await _signInManager.GetExternalLoginInfoAsync();
+                if (info == null)
+                {
+                    return View("Error");
+                }
+
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Name = model.Name };
+                var result = await _userManager.CreateAsync(user);
+                if (result.Succeeded)
+                {
+                    result = await _userManager.AddLoginAsync(user, info);
+                    if (result.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+
+                        return LocalRedirect(returnurl);
+                    }
+                }
+
+                AddErrors(result);
+            }
+
+            ViewData["ReturnUrl"] = returnurl;
+            return View(model);
+        }
 
         private void AddErrors(IdentityResult result)
         {
