@@ -327,7 +327,7 @@ namespace IdentityManager.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> EnableAuthenticator(TwoFactorAuthenticationViewModel model)
         {
             if (ModelState.IsValid)
