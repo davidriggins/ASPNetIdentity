@@ -33,7 +33,7 @@ namespace IdentityManager.Controllers
 
 
         // Means only an authorized user can access this method
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Privacy()
         {
             return View();

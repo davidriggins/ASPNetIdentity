@@ -3,6 +3,9 @@
 <form asp-controller="Account" asp-action="Register" method="post" role="form">
     <h4>Create a new account</h4>
     <hr />
+
+    <input hidden asp-for="RoleList" />
+
     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="Email" class="col-md-2"></label>
@@ -35,7 +38,7 @@
     <div class="form-group">
         <label asp-for="RoleSelected" class="col-md-2"></label>
         <div class="col-md-10">
-            <select asp-for="RoleSelected" asp-items="@Model.RoleList" class="form-control">
+            <select asp-for="RoleSelected" asp-items="@Model.RoleList" class="form-select">
                 <option disabled selected>--Select Role--</option>
             </select>
         </div>
