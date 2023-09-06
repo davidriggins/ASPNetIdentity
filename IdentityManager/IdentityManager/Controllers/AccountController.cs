@@ -117,6 +117,11 @@ namespace IdentityManager.Controllers
                     return LocalRedirect(returnUrl);
                 }
 
+                if (result.RequiresTwoFactor)
+                {
+                    return RedirectToAction(nameof(VerifyAuthenticatorCode), new { returnurl = returnUrl, RememberMe = model.RememberMe });
+                }
+
                 if (result.IsLockedOut)
                 {
                     return View("Lockout");
@@ -361,7 +366,7 @@ namespace IdentityManager.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string returnUrl=null) 
+        public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string returnUrl = null)
         {
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
@@ -370,12 +375,37 @@ namespace IdentityManager.Controllers
             }
 
             ViewData["ReturnUrl"] = returnUrl;
-            return View(new VerifyAuthenticatorViewModel { ReturnUrl= returnUrl, RememberMe = rememberMe });
+            return View(new VerifyAuthenticatorViewModel { ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyAuthenticatorCode(VerifyAuthenticatorViewModel model)
+        {
+            model.ReturnUrl = model.ReturnUrl ?? Url.Content("~/");
 
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
+            var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(model.Code, model.RememberMe, rememberClient: true);
+            if (result.Succeeded)
+            {
+                return LocalRedirect(model.ReturnUrl);
+            }
+
+            if (result.IsLockedOut)
+            {
+                return View("Lockout");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Code.");
+                return View(model);
+            }
+        }
 
 
         private void AddErrors(IdentityResult result)
