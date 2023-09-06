@@ -262,6 +262,11 @@ namespace IdentityManager.Controllers
                 await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
                 return LocalRedirect(returnUrl);
             }
+
+            if (result.RequiresTwoFactor)
+            {
+                return RedirectToAction("VerifyAuthenticatorCode", new { returnurl = returnUrl });
+            }
             else
             {
                 // If the user does not have an account, then we will ask the user to create one.
@@ -345,7 +350,13 @@ namespace IdentityManager.Controllers
                 }
             }
 
-            return RedirectToAction("AuthenticatorConfirmation");
+            return RedirectToAction(nameof(AuthenticatorConfirmation));
+        }
+
+
+        public IActionResult AuthenticatorConfirmation()
+        {
+            return View();
         }
 
 
