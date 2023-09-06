@@ -25,6 +25,12 @@ builder.Services.Configure<IdentityOptions>(opt =>
     opt.Lockout.MaxFailedAccessAttempts = 5;
 });
 
+// Set general Access Denied path
+builder.Services.ConfigureApplicationCookie(opt =>
+{
+    opt.AccessDeniedPath = new PathString("/Home/AccessDenied");
+});
+
 builder.Services.AddAuthentication().AddFacebook(options =>
 {
     options.AppId = "614466910849833";
