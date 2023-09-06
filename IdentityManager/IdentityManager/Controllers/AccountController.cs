@@ -361,7 +361,7 @@ namespace IdentityManager.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string returnurl=null) 
+        public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string returnUrl=null) 
         {
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
@@ -369,8 +369,13 @@ namespace IdentityManager.Controllers
                 return View("Error");
             }
 
-            return View(new VerifyAuthenticatorViewModel { ReturnUrl= returnurl, RememberMe = rememberMe });
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(new VerifyAuthenticatorViewModel { ReturnUrl= returnUrl, RememberMe = rememberMe });
         }
+
+
+
+
 
 
         private void AddErrors(IdentityResult result)
