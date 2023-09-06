@@ -13,6 +13,7 @@ namespace IdentityManager.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly UrlEncoder _urlEncoder;
@@ -21,12 +22,14 @@ namespace IdentityManager.Controllers
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             IEmailSender emailSender,
-            UrlEncoder urlEncoder)
+            UrlEncoder urlEncoder,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _urlEncoder = urlEncoder;
+            _roleManager = roleManager;
         }
 
         public IActionResult Index()
@@ -38,6 +41,13 @@ namespace IdentityManager.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register(string returnUrl = null)
         {
+            if (!await _roleManager.RoleExistsAsync("Admin"))
+            {
+                // create roles
+                await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                await _roleManager.CreateAsync(new IdentityRole("User"));
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
 
             RegisterViewModel registerViewModel = new RegisterViewModel();
