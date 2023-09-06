@@ -334,7 +334,7 @@ namespace IdentityManager.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             await _userManager.ResetAuthenticatorKeyAsync(user);
-            
+
             await _userManager.SetTwoFactorEnabledAsync(user, false);
 
             return RedirectToAction(nameof(Index), "Home");
@@ -347,18 +347,17 @@ namespace IdentityManager.Controllers
         {
             string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
 
-
             var user = await _userManager.GetUserAsync(User);
             await _userManager.ResetAuthenticatorKeyAsync(user);
+
             var token = await _userManager.GetAuthenticatorKeyAsync(user);
 
-            string AuthenticatorUri = string.Format(AuthenticatorUriFormat, _urlEncoder.Encode("IdentityManager"), 
+            string AuthenticatorUri = string.Format(AuthenticatorUriFormat, _urlEncoder.Encode("IdentityManager"),
                 _urlEncoder.Encode(user.Email), token);
 
-            var model = new TwoFactorAuthenticationViewModel() { Token = token, QRCodeUrl=AuthenticatorUri };
+            var model = new TwoFactorAuthenticationViewModel() { Token = token, QRCodeUrl = AuthenticatorUri };
 
             return View(model);
-
         }
 
         [HttpPost]
