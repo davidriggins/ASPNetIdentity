@@ -13,7 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Add Identity. Relation between users, roles and stores
+//// Add Identity. Relation between users, roles and stores
 //builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 // Register the MailJet email sender
