@@ -113,6 +113,20 @@ namespace IdentityManager.Controllers
 
             }
 
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem()
+            {
+                Value = "Admin",
+                Text = "Admin"
+            });
+            listItems.Add(new SelectListItem()
+            {
+                Value = "User",
+                Text = "User"
+            });
+
+            model.RoleList = listItems;
+
             return View(model);
         }
 
