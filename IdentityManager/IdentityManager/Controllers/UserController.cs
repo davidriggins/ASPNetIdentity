@@ -4,6 +4,7 @@ using Mailjet.Client.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 
 namespace IdentityManager.Controllers
 {
@@ -165,6 +166,34 @@ namespace IdentityManager.Controllers
             TempData[SD.Success] = "User deleted successfully.";
 
             return RedirectToAction(nameof(Index));
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ManageUserClaims(string userId)
+        {
+            IdentityUser user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+
+            var model = new UserClaimsViewModel()
+            {
+                UserId = userId
+            };
+
+            foreach (Claim claim in ClaimStore.claimsList)
+            {
+                UserClaim userClaim = new UserClaim
+                {
+                    ClaimType = claim.Type,
+                };
+                model.Claims.Add(userClaim);
+            }
+
+            return View(model);
         }
     }
 }
