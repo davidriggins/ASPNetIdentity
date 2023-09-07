@@ -39,11 +39,5 @@ namespace IdentityManager.Controllers
             return View(userList);
 
         }
-
-
-        public IActionResult Index()
-        {
-            return View();
-        }
     }
 }
