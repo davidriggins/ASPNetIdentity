@@ -115,5 +115,36 @@ namespace IdentityManager.Controllers
             });
             return View(user);
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult LockUnlock(string userId)
+        {
+            var objFromDb = _db.ApplicationUser.FirstOrDefault(u => u.Id == userId);
+            if (objFromDb == null)
+            {
+                return NotFound();
+            }
+
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
+            {
+                // user is locked until lockout end time
+                // clicking on this action will unlock them
+                objFromDb.LockoutEnd = DateTime.Now;
+                TempData[SD.Success] = "User unlocked successfully.";
+
+            }
+            else
+            {
+                // user is not locked and want to lock
+                objFromDb.LockoutEnd = DateTime.Now.AddYears(1000);
+                TempData[SD.Success] = "User locked successfully.";
+            }
+
+            _db.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
