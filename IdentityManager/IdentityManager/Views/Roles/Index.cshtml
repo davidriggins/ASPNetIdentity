@@ -1,29 +1,26 @@
-﻿@using Microsoft.AspNetCore.Identity;
-@model IEnumerable<IdentityRole>
-
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
 <br />
 <div class="row">
     <div class="col-6">
-        <h2 class="text-primary">Roles List</h2>
+        <h2 class="text-primary">Roles List </h2>
     </div>
     <div class="col-6 text-right">
         <a asp-action="Upsert" asp-controller="Roles" class="btn btn-primary">Create New Role</a>
     </div>
 </div>
-<div class="p-4 boarder rounded">
+<div class="p-4 border rounded">
     @if (Model.Any())
     {
         <table class="table table-striped border">
             <tr class="table-secondary">
                 <th>
-                    Id
+                    ID
                 </th>
                 <th>
                     Name
                 </th>
                 <th></th>
             </tr>
-
             @foreach (var item in Model)
             {
                 <tr>
@@ -33,7 +30,8 @@
                     <td>
                         @item.Name
                     </td>
-                    <td></td>
+                    <td>
+                    </td>
                 </tr>
             }
         </table>
